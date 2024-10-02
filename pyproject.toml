@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "atap-context-extractor"
+version = "0.1.0"
+description = "A tool for extracting the context around searched text in a corpus"
+authors = ["Hamish Croser <hamish.croser@sydney.edu.au>"]
+readme = "README.md"
+documentation = "https://australian-text-analytics-platform.github.io/atap-context-extractor/DOCS.html"
+repository = "https://github.com/Australian-Text-Analytics-Platform/atap-context-extractor"
+license = "MIT"
+packages = [{include = "atap_context_extractor"}]
+exclude = ["*/.ipynb_checkpoints/*", "*log.txt"]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+atap-corpus-loader = "~=1.7.4"
+panel = "~=1.4"
+regex = "~=2024.9.11"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+jupyterlab = "~=4.0.0"
+ipywidgets = "~=8.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
