@@ -21,7 +21,7 @@ class Extractor:
     def split_by_line(to_split: str) -> list[str]:
         return regex.findall(r'.*?(?:\n|$)', to_split)
 
-    CONTEXT_TYPE_MAP: dict[str, Callable] = {
+    CONTEXT_TYPE_MAP: dict[ContextType, Callable] = {
         ContextType.CHARACTERS: split_by_character,
         ContextType.WORDS: split_by_word,
         ContextType.LINES: split_by_line,
@@ -65,7 +65,7 @@ class Extractor:
         return f"({start},{end})"
 
     @staticmethod
-    def extract_context_row(row_dict: dict, row_idx: Hashable, doc_col: str, match_col: str,
+    def extract_context_row(row_dict: dict, row_idx: int, doc_col: str, match_col: str,
                             match_idx_col: str, context_idx_col: str,
                             split_fn: Callable, context_count: int,
                             search_patterns: list[Pattern]) -> DataFrame:
@@ -102,4 +102,7 @@ class Extractor:
                 for key, value in row_data.items():
                     new_data[key].append(value)
 
-        return DataFrame(new_data)
+        df = DataFrame(new_data)
+        df = df.astype({row_idx_col: 'Int64'})
+
+        return df
