@@ -1,6 +1,6 @@
-from typing import Callable, Hashable, Union
+from typing import Callable, Hashable
 
-from pandas import DataFrame, Series, concat
+from pandas import DataFrame, concat
 from panel.widgets import Tqdm
 from regex import regex, Pattern, Match
 
@@ -52,32 +52,28 @@ class Extractor:
         while context_idx_col in df.columns:
             context_idx_col += '_'
 
-        df_ls: list[DataFrame] = []
-        for index, row in tqdm_obj(df.iterrows(), total=df.shape[0], desc="Extracting context", unit='documents'):
-            args = (row, index, doc_col, match_col, match_idx_col, context_idx_col, split_fn, context_count, search_patterns)
-            row_df = Extractor.extract_context_row(*args)
-            df_ls.append(row_df)
+        dict_df = df.to_dict(orient="records")
 
-        if len(df_ls):
-            return concat(df_ls, ignore_index=True)
-        else:
-            return DataFrame()
+        def _extract_row_generator():
+            for idx, row_dict in tqdm_obj(enumerate(dict_df), total=df.shape[0], desc="Extracting context", unit='documents'):
+                yield Extractor.extract_context_row(row_dict, idx, doc_col, match_col, match_idx_col, context_idx_col, split_fn, context_count, search_patterns)
+
+        return concat(_extract_row_generator(), ignore_index=True)
 
     @staticmethod
     def get_formatted_index(start: int, end: int) -> str:
         return f"({start},{end})"
 
     @staticmethod
-    def extract_context_row(row: Series, row_idx: Hashable, doc_col: str, match_col: str,
+    def extract_context_row(row_dict: dict, row_idx: Hashable, doc_col: str, match_col: str,
                             match_idx_col: str, context_idx_col: str,
                             split_fn: Callable, context_count: int,
                             search_patterns: list[Pattern]) -> DataFrame:
         row_idx_col: str = 'source_doc'
-        row_dict: dict = row.to_dict()
         new_data_cols: list[str] = list(row_dict.keys()) + [row_idx_col, match_col, match_idx_col, context_idx_col]
         new_data: dict[str, list] = {k: [] for k in new_data_cols}
 
-        text = str(row[doc_col])
+        text = str(row_dict[doc_col])
         match: Match
         for pattern in search_patterns:
             for match in regex.finditer(pattern, text, overlapped=True):
