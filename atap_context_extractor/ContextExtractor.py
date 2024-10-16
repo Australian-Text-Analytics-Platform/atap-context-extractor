@@ -202,6 +202,7 @@ class ContextExtractor(pn.viewable.Viewer):
         self._update_display()
 
     def extract_corpus(self, *_):
+        self.log("extract_corpus method called", logging.DEBUG)
         if (self.corpus_loader is None) or (self.corpus_selector.value is None):
             self.display_error("No corpus selected")
             return
@@ -231,10 +232,13 @@ class ContextExtractor(pn.viewable.Viewer):
         self.progress_bar.visible = True
         self._set_components_state(False)
         try:
+            self.log("extract_corpus: starting corpus extraction", logging.DEBUG)
             extracted_df: DataFrame = Extractor.extract_context_df(corpus_df, col_doc,
                                                                    self.search_terms, context_type,
                                                                    context_count, self.progress_bar)
+            self.log("extract_corpus: building new corpus from dataframe", logging.DEBUG)
             extracted_corpus: DataFrameCorpus = DataFrameCorpus.from_dataframe(extracted_df, col_doc=col_doc, name=new_name)
+            self.log("extract_corpus: Adding corpus to corpora", logging.DEBUG)
             self.corpora.add(extracted_corpus)
         except Exception as e:
             self.log(traceback.format_exc(), logging.DEBUG)
