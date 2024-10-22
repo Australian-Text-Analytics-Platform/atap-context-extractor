@@ -110,7 +110,7 @@ class ContextExtractor(pn.viewable.Viewer):
         self._on_corpora_update()
 
     def __panel__(self):
-        return self.corpus_loader
+        return self.corpus_loader.servable()
 
     def get_corpus_loader(self) -> CorpusLoader:
         return self.corpus_loader
