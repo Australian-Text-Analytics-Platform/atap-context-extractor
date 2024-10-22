@@ -42,6 +42,8 @@ class Extractor:
             term_text = term.text
             if not term.use_regex:
                 term_text = regex.escape(term_text)
+            if term.whole_words:
+                term_text = rf"\b{term_text}\b"
             term_pattern = regex.compile(term_text, flags=flags)
             search_patterns.append(term_pattern)
 
@@ -61,7 +63,8 @@ class Extractor:
             result_dicts = df.apply(Extractor.extract_context_row, axis=1, args=args)
         flattened = [item for sublist in result_dicts for item in sublist]
 
-        result_df = DataFrame(flattened)
+        expected_cols = list(df.columns) + [row_idx_col, match_col, match_idx_col, context_idx_col]
+        result_df = DataFrame(flattened, columns=expected_cols)
 
         return result_df
 

@@ -76,9 +76,11 @@ class ContextExtractor(pn.viewable.Viewer):
         self.search_term_input = TextInput(name='Search term')
         self.ignore_case = Checkbox(name="Ignore case")
         self.use_regex = Checkbox(name="Regular expression")
+        self.whole_words = Checkbox(name="Whole words", value=True)
         self.add_search_term_button = Button(
             name="Add search term",
-            button_type="primary", button_style="solid"
+            button_type="primary", button_style="solid",
+            align='center'
         )
         self.add_search_term_button.on_click(self._add_search_term)
 
@@ -136,7 +138,7 @@ class ContextExtractor(pn.viewable.Viewer):
 
         panel_objects = [
             self.corpus_selector,
-            Row(self.search_term_input, Column(self.ignore_case, self.use_regex), self.add_search_term_button),
+            Row(self.search_term_input, Column(self.ignore_case, self.use_regex, self.whole_words), self.add_search_term_button),
             Row(*remove_buttons),
             self.progress_bar,
             Row(self.context_count_input, self.context_type),
@@ -184,12 +186,14 @@ class ContextExtractor(pn.viewable.Viewer):
 
         use_regex: bool = self.use_regex.value
         ignore_case: bool = self.ignore_case.value
+        whole_words: bool = self.whole_words.value
 
-        search_term = SearchTerm(text, use_regex, ignore_case)
+        search_term = SearchTerm(text, use_regex, ignore_case, whole_words)
         self.search_terms.append(search_term)
 
         self.use_regex.value = False
         self.ignore_case.value = False
+        self.whole_words.value = True
         self.search_term_input.value = ""
         self.search_term_input.value_input = ""
 
