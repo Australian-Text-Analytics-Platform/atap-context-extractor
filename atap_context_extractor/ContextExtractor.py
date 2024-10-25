@@ -5,6 +5,7 @@ from os.path import abspath, join, dirname
 from typing import Optional
 
 import panel as pn
+from atap_corpus._types import TCorpora
 from atap_corpus.corpus.corpus import DataFrameCorpus
 from atap_corpus_loader import CorpusLoader
 from pandas import DataFrame
@@ -76,9 +77,11 @@ class ContextExtractor(pn.viewable.Viewer):
         self.search_term_input = TextInput(name='Search term')
         self.ignore_case = Checkbox(name="Ignore case")
         self.use_regex = Checkbox(name="Regular expression")
+        self.whole_words = Checkbox(name="Whole words", value=True)
         self.add_search_term_button = Button(
             name="Add search term",
-            button_type="primary", button_style="solid"
+            button_type="primary", button_style="solid",
+            align='center'
         )
         self.add_search_term_button.on_click(self._add_search_term)
 
@@ -101,21 +104,21 @@ class ContextExtractor(pn.viewable.Viewer):
             self.corpus_loader: CorpusLoader = corpus_loader
         else:
             self.corpus_loader: CorpusLoader = CorpusLoader(root_directory='.', run_logger=run_logger)
-        self.corpora = self.corpus_loader.get_mutable_corpora()
+        self.corpora: TCorpora = self.corpus_loader.get_mutable_corpora()
 
         self.corpus_loader.register_event_callback("build", self._on_corpora_update)
         self.corpus_loader.register_event_callback("rename", self._on_corpora_update)
         self.corpus_loader.register_event_callback("delete", self._on_corpora_update)
-        self.corpus_loader.add_tab("Corpus Extractor", self.extractor_panel)
+        self.corpus_loader.add_tab("Context Extractor", self.extractor_panel)
         self._on_corpora_update()
 
     def __panel__(self):
-        return self.corpus_loader
+        return self.corpus_loader.servable()
 
     def get_corpus_loader(self) -> CorpusLoader:
         return self.corpus_loader
 
-    def get_mutable_corpora(self) -> DataFrameCorpus:
+    def get_mutable_corpora(self) -> TCorpora:
         return self.corpora
 
     def display_error(self, error_msg: str):
@@ -136,7 +139,7 @@ class ContextExtractor(pn.viewable.Viewer):
 
         panel_objects = [
             self.corpus_selector,
-            Row(self.search_term_input, Column(self.ignore_case, self.use_regex), self.add_search_term_button),
+            Row(self.search_term_input, Column(self.ignore_case, self.use_regex, self.whole_words), self.add_search_term_button),
             Row(*remove_buttons),
             self.progress_bar,
             Row(self.context_count_input, self.context_type),
@@ -184,12 +187,14 @@ class ContextExtractor(pn.viewable.Viewer):
 
         use_regex: bool = self.use_regex.value
         ignore_case: bool = self.ignore_case.value
+        whole_words: bool = self.whole_words.value
 
-        search_term = SearchTerm(text, use_regex, ignore_case)
+        search_term = SearchTerm(text, use_regex, ignore_case, whole_words)
         self.search_terms.append(search_term)
 
         self.use_regex.value = False
         self.ignore_case.value = False
+        self.whole_words.value = True
         self.search_term_input.value = ""
         self.search_term_input.value_input = ""
 
