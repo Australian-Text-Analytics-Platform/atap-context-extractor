@@ -58,9 +58,13 @@ class Extractor:
             context_idx_col += '_'
         row_idx_col: str = 'source_doc'
 
+        dict_df: list[dict] = df.to_dict(orient='records')
+
         with tqdm_obj(total=df.shape[0], desc="Extracting context", unit="documents") as progress_bar:
             args = (doc_col, row_idx_col, match_col, match_idx_col, context_idx_col, split_fn, context_count, search_patterns, progress_bar)
-            result_dicts = df.apply(Extractor.extract_context_row, axis=1, args=args)
+            result_dicts = []
+            for idx, dict_row in enumerate(dict_df):
+                result_dicts.append(Extractor.extract_context_row(dict_row, idx, *args))
         flattened = [item for sublist in result_dicts for item in sublist]
 
         expected_cols = list(df.columns) + [row_idx_col, match_col, match_idx_col, context_idx_col]
@@ -73,14 +77,14 @@ class Extractor:
         return f"({start},{end})"
 
     @staticmethod
-    def extract_context_row(row: Series, doc_col: str, row_idx_col: str, match_col: str,
+    def extract_context_row(row: dict, idx: int, doc_col: str, row_idx_col: str, match_col: str,
                             match_idx_col: str, context_idx_col: str,
                             split_fn: Callable, context_count: int,
                             search_patterns: list[Pattern], tqdm_obj) -> list[dict]:
         tqdm_obj.update(1)
-        row_idx: int = int(row.name)
+        row_idx: int = int(idx)
         new_data: list[dict] = []
-        row_dict: dict = row.to_dict()
+        row_dict: dict = row
 
         text = str(row[doc_col])
         match: Match

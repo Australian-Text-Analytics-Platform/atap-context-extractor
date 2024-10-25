@@ -5,6 +5,7 @@ from os.path import abspath, join, dirname
 from typing import Optional
 
 import panel as pn
+from atap_corpus._types import TCorpora
 from atap_corpus.corpus.corpus import DataFrameCorpus
 from atap_corpus_loader import CorpusLoader
 from pandas import DataFrame
@@ -103,12 +104,12 @@ class ContextExtractor(pn.viewable.Viewer):
             self.corpus_loader: CorpusLoader = corpus_loader
         else:
             self.corpus_loader: CorpusLoader = CorpusLoader(root_directory='.', run_logger=run_logger)
-        self.corpora = self.corpus_loader.get_mutable_corpora()
+        self.corpora: TCorpora = self.corpus_loader.get_mutable_corpora()
 
         self.corpus_loader.register_event_callback("build", self._on_corpora_update)
         self.corpus_loader.register_event_callback("rename", self._on_corpora_update)
         self.corpus_loader.register_event_callback("delete", self._on_corpora_update)
-        self.corpus_loader.add_tab("Corpus Extractor", self.extractor_panel)
+        self.corpus_loader.add_tab("Context Extractor", self.extractor_panel)
         self._on_corpora_update()
 
     def __panel__(self):
@@ -117,7 +118,7 @@ class ContextExtractor(pn.viewable.Viewer):
     def get_corpus_loader(self) -> CorpusLoader:
         return self.corpus_loader
 
-    def get_mutable_corpora(self) -> DataFrameCorpus:
+    def get_mutable_corpora(self) -> TCorpora:
         return self.corpora
 
     def display_error(self, error_msg: str):
