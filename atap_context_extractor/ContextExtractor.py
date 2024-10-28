@@ -190,7 +190,6 @@ class ContextExtractor(pn.viewable.Viewer):
         whole_words: bool = self.whole_words.value
 
         search_term = SearchTerm(text, use_regex, ignore_case, whole_words)
-        self.search_terms.append(search_term)
 
         self.use_regex.value = False
         self.ignore_case.value = False
@@ -198,7 +197,12 @@ class ContextExtractor(pn.viewable.Viewer):
         self.search_term_input.value = ""
         self.search_term_input.value_input = ""
 
-        self.log(f"SearchTerm added: {search_term.__repr__()}", logging.DEBUG)
+        if search_term in self.search_terms:
+            self.display_error("This search term has already been added")
+        else:
+            self.search_terms.append(search_term)
+            self.log(f"SearchTerm added: {search_term.__repr__()}", logging.DEBUG)
+
         self._update_display()
 
     def _remove_search_term(self, search_term: SearchTerm):
