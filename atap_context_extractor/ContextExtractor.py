@@ -107,9 +107,7 @@ class ContextExtractor(pn.viewable.Viewer):
             self.corpus_loader: CorpusLoader = CorpusLoader(root_directory='.', run_logger=run_logger)
         self.corpora: TCorpora = self.corpus_loader.get_mutable_corpora()
 
-        self.corpus_loader.register_event_callback("build", self._on_corpora_update)
-        self.corpus_loader.register_event_callback("rename", self._on_corpora_update)
-        self.corpus_loader.register_event_callback("delete", self._on_corpora_update)
+        self.corpus_loader.register_event_callback("update", self._on_corpora_update)
         self.corpus_loader.add_tab("Context Extractor", self.extractor_panel)
         self._on_corpora_update()
 
@@ -266,6 +264,6 @@ class ContextExtractor(pn.viewable.Viewer):
         self.progress_bar.visible = False
         self._set_components_state(True)
         self.search_terms = []
-        self._on_corpora_update()
+        self.corpus_loader.trigger_event("update")
 
         self.display_success(f"Context extracted successfully. Extracted corpus: {extracted_corpus.name}")

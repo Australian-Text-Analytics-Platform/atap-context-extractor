@@ -12,7 +12,7 @@ exclude = ["*/.ipynb_checkpoints/*", "*log.txt"]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
-atap-corpus-loader = "~=1.7.6"
+atap-corpus-loader = "~=1.8.0"
 panel = "~=1.4"
 regex = "~=2024.9.11"
 
