@@ -246,11 +246,12 @@ class ContextExtractor(pn.viewable.Viewer):
                                                                    context_count, self.progress_bar)
             self.log("extract_corpus: building new corpus from dataframe", logging.DEBUG)
             extracted_corpus: DataFrameCorpus = DataFrameCorpus.from_dataframe(extracted_df, col_doc=col_doc, name=new_name)
-            try:
-                extracted_corpus.add_dtm(atap_corpus.parts.dtm.DTM.from_docs_with_vectoriser(extracted_corpus.docs()), 'tokens')
-            except Exception as e:
-                self.log("Exception while building DTM: " + traceback.format_exc(), logging.ERROR)
-                self.display_error(str(e))
+            if self.corpus_loader.controller.build_dtms:
+                try:
+                    extracted_corpus.add_dtm(atap_corpus.parts.dtm.DTM.from_docs_with_vectoriser(extracted_corpus.docs()), 'tokens')
+                except Exception as e:
+                    self.log("Exception while building DTM: " + traceback.format_exc(), logging.ERROR)
+                    self.display_error(str(e))
 
             self.log("extract_corpus: Adding corpus to corpora", logging.DEBUG)
             self.corpora.add(extracted_corpus)

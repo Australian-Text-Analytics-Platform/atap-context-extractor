@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "atap-context-extractor"
-version = "0.2.2"
+version = "0.2.3"
 description = "A tool for extracting the context around searched text in a corpus"
 authors = ["Hamish Croser <hamish.croser@sydney.edu.au>"]
 readme = "README.md"
