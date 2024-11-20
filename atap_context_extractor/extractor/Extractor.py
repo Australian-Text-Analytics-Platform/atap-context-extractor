@@ -47,7 +47,9 @@ class Extractor:
         context_idx_col: str = "context_idx"
         while context_idx_col in df.columns:
             context_idx_col += '_'
-        row_idx_col: str = 'source_doc'
+        row_idx_col: str = "source_doc"
+        while row_idx_col in df.columns:
+            row_idx_col += '_'
 
         dict_df: list[dict] = df.to_dict(orient='records')
 
