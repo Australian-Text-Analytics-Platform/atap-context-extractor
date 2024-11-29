@@ -86,7 +86,7 @@ class ContextExtractor(pn.viewable.Viewer):
         )
         self.add_search_term_button.on_click(self._add_search_term)
 
-        self.context_count_input = IntInput(name='Context count', value=100, start=0)
+        self.context_count_input = IntInput(name='Context count', value=25, start=0)
         self.context_type = Select(name='Context type', options=ContextExtractor.CONTEXT_TYPES)
 
         self.extract_corpus_button = Button(

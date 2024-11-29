@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class ContextType(Enum):
-    CHARACTERS = "characters"
     WORDS = "words"
+    CHARACTERS = "characters"
     LINES = "lines"
 
     def __str__(self):
