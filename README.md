@@ -6,7 +6,7 @@ A tool for extracting the context around searched text in a corpus
 
 Click the button below to access a demo deployed on Binderhub
 
-[![Binder](https://binderhub.atap-binder.cloud.edu.au/badge_logo.svg)](https://binderhub.atap-binder.cloud.edu.au/v2/gh/Australian-Text-Analytics-Platform/atap-context-extractor/main?labpath=context-extractor.ipynb)
+[![Binder](https://binderhub.rc.nectar.org.au/badge_logo.svg)](https://binderhub.rc.nectar.org.au/v2/gh/Australian-Text-Analytics-Platform/atap-context-extractor/main?labpath=context-extractor.ipynb)
 
 ## Documentation
 
